@@ -29,7 +29,7 @@ LEVELS.easy.alive = { float: 26, wings: [{ id: 11, pivot: [0.345, 0.62], dir: -1
 LEVELS.normal.alive = { float: 10 };   // 空は ないので、雲・鳥は 出さない
 LEVELS.hard.alive = { float: 10, sky: true };
 // ひみつ（じぶんだけの てんし）：顔のない園章の天使。白い絵を、塗っても・描いてもよい
-const SECRET = { line: 'angel_line', regions: 'secret_regions', count: 29, mask: 'angel_draw_mask', stars: 4,
+const SECRET = { line: 'angel_line', regions: 'secret_regions', count: 19, mask: 'angel_draw_mask', stars: 4,
   alive: { wings: [{ id: 5, pivot: [0.33, 0.66], dir: -1 }, { id: 6, pivot: [0.7, 0.66], dir: 1 }], around: 1 } };
 const ORDER = ['easy', 'normal', 'hard'];
 const UNDER_CONSTRUCTION = [];   // 改修中（まだ遊べない）。イラストができたら外す
@@ -2705,7 +2705,12 @@ function drawScreen(root, arg) {
   if (!arg.fresh) {
     const st = loadStore();
     if (st.drawing && Array.isArray(st.drawing[SECRET_KEY])) strokes = st.drawing[SECRET_KEY];
-    const cols = st.colors && st.colors[SECRET_KEY];
+    let cols = st.colors && st.colors[SECRET_KEY];
+    if (cols && cols.length === 30) {   // 文字の 部分を まとめる前（29こ）の 保存を 引きつぐ：1字＝1か所に
+      const old = cols, MAP = { 21: 17, 22: 17, 23: 18, 20: 19, 24: 19, 25: 19, 26: 19, 27: 19, 28: 19, 29: 19 };
+      cols = old.slice(0, R.n + 1);
+      for (let o = 20; o <= 29; o++) if (old[o] && old[o] !== '#ffffff' && (!cols[MAP[o]] || cols[MAP[o]] === '#ffffff')) cols[MAP[o]] = old[o];
+    }
     if (cols && cols.length === R.n + 1) {
       for (let id = 1; id <= R.n; id++) if (cols[id] && cols[id] !== '#ffffff') fillRegion(id, cols[id]);
       fctx.putImageData(fimg, 0, 0);
