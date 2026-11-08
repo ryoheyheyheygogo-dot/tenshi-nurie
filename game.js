@@ -1651,6 +1651,7 @@ function titleScreen(root) {
   // 男の子の ほかの 所を さわったら、走るのを またずに すぐ すたーと が 出る（はやく あそびたい 子のため）
   function skipIntro() {
     if (going || logoShown) return;
+    if (goldKid) return;   // 金色の 男の子の 時は、ほかを さわっても 走りぬけるまで 待つ（見のがさないように）
     running = false;
     cancelAnimationFrame(raf);
     kid.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' }).onfinish = () => { kid.style.display = 'none'; };
@@ -1658,8 +1659,14 @@ function titleScreen(root) {
     dropLogo(true);
   }
   root.addEventListener('pointerdown', () => skipIntro());
-  // かくし：10回に1回くらい、金色の男の子が走ってくる。たたくとスタンプ
-  const goldKid = Math.random() < 0.1;
+  // かくし：ときどき 金色の男の子が走ってくる。たたくとスタンプ
+  // まだ スタンプが ない子：4回に1回くらい＋3回つづけて 出なかったら 次は かならず。もらった あとは 10回に1回くらい
+  const kst = loadStore();
+  const hasGoldStamp = !!(kst.stamps && kst.stamps.goldkid);
+  const kidMiss = kst.goldKidMiss || 0;
+  const goldKid = hasGoldStamp ? Math.random() < 0.1 : (kidMiss >= 3 || Math.random() < 0.25);
+  kst.goldKidMiss = goldKid ? 0 : kidMiss + 1;
+  writeStore(kst);
   if (goldKid) kid.style.filter = GOLD_FILTER;
   let goldAwarded = false;
   later(800, () => {
