@@ -1,0 +1,13 @@
+{
+  "name": "天使のぬりえ",
+  "short_name": "天使のぬりえ",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#a9d9fd",
+  "theme_color": "#a9d9fd",
+  "icons": [
+    { "src": "assets/img/icon192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/img/app_icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

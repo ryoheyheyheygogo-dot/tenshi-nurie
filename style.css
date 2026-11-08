@@ -1,0 +1,167 @@
+/* 天使のぬりえ（Godotなし版） */
+@font-face { font-family: "Nurie"; src: url("assets/fonts/nurie_font.otf") format("opentype"); font-display: block; }
+@font-face { font-family: "TitlePop"; src: url("assets/fonts/title_font.ttf") format("truetype"); font-display: block; }
+
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  overflow: hidden; background: #a9d9fd;
+  touch-action: none; overscroll-behavior: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+  font-family: "Nurie", sans-serif;
+}
+img { -webkit-user-drag: none; user-select: none; pointer-events: none; }
+
+#stage {
+  position: fixed; left: 0; top: 0;
+  transform-origin: 0 0; overflow: hidden;
+  background: #a9d9fd;
+}
+.screen { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; }
+.abs { position: absolute; }
+.full { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; }
+
+/* 文字（白いふちどり） */
+.lbl {
+  position: absolute; text-align: center; white-space: nowrap;
+  line-height: 1.2; pointer-events: none;
+}
+
+/* 丸いボタン */
+.btn {
+  position: absolute; border-radius: 50%; border: 6px solid #fff;
+  box-sizing: border-box; padding: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+}
+.btn img { width: 60%; height: 60%; object-fit: contain; }
+.bounce { animation: bounce 0.18s ease-out; }
+@keyframes bounce { 0% { transform: scale(1); } 35% { transform: scale(0.88); } 100% { transform: scale(1); } }
+
+/* 色のボタン */
+.sw {
+  position: absolute; border-radius: 50%; box-sizing: border-box; cursor: pointer;
+  border: 3px solid #9a8c80; transition: transform 0.08s;
+}
+.sw.sel { border-width: 6px; border-color: #404040; transform: scale(1.14); z-index: 2; }
+.crestbox {
+  position: absolute; border-radius: 22px; border: 4px solid #7a2820;
+  background: rgba(255,255,255,0.55); box-sizing: border-box;
+}
+.crestmark { position: absolute; border-radius: 50%; }
+
+/* 読み込み中 */
+#loading {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: #a9d9fd; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+}
+#loading img { width: 100%; height: 100%; object-fit: contain; }
+#loading .bar {
+  position: absolute; left: 25%; right: 25%; bottom: 10%; height: 10px;
+  background: rgba(255,255,255,0.8); border-radius: 5px; overflow: hidden;
+}
+#loadbar { width: 0%; height: 100%; background: #ff9a3c; transition: width 0.2s; }
+
+/* 縦向きの案内 */
+#rotate {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 100; background: #2b2350;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+}
+#rotate .phone {
+  width: 32vmin; height: 57.6vmin; background: #fff; border-radius: 28px;
+  border: 14px solid #ffb300; box-sizing: border-box;
+  animation: turn 2.5s infinite;
+}
+#rotate .msg {
+  margin-top: 9vmin; color: #ffe066; font-size: 11vw; font-family: "Nurie", sans-serif;
+  
+}
+@keyframes turn {
+  0%, 20% { transform: rotate(0deg); }
+  52%, 84% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+@media (orientation: portrait) { #rotate { display: flex; } }
+
+/* タイトル */
+.startbtn {
+  position: absolute; width: 300px; height: 110px; left: 50%; top: 64%;
+  margin-left: -150px; margin-top: -55px; border-radius: 55px;
+  background: #ffb300; border: 8px solid #fff; box-sizing: border-box;
+  box-shadow: 0 6px 6px rgba(102,51,0,0.35);
+  font-family: "TitlePop", "Nurie", sans-serif; font-size: 54px; color: #fff;
+
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+.kid { position: absolute; transform-origin: 50% 100%; image-rendering: pixelated; cursor: pointer; }
+
+/* 選ぶ画面 */
+.card {
+  position: absolute; border-radius: 36px; border: 8px solid #fff; box-sizing: border-box;
+  cursor: pointer; box-shadow: 0 6px 0 rgba(0,0,0,0.12);
+}
+.paper {
+  position: absolute; left: 20px; right: 20px; top: 20px; height: 300px;
+  background: #fff; border-radius: 18px; overflow: hidden;
+}
+.paper > img.pic { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+.tape {
+  position: absolute; left: 50%; top: 50%; white-space: nowrap; padding: 6px 18px;
+  background: #ffd23f; border: 6px solid #333; border-radius: 10px;
+  transform: translate(-50%,-50%) rotate(-10deg); font-size: 34px; line-height: 1.2; color: #333;
+}
+.twinkle { position: absolute; background: #ffffd9; animation: tw 2s ease-in-out infinite; }
+@keyframes tw { 0%,100% { opacity: 1; } 50% { opacity: 0.15; } }
+
+/* 紙ふぶき・きらきら */
+.confetti { position: absolute; animation: fall linear infinite; }
+@keyframes fall {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(var(--dist)) rotate(var(--rot)); }
+}
+.sparkle { position: absolute; animation: spk ease-in-out infinite alternate; }
+@keyframes spk { from { transform: scale(1); } to { transform: scale(0.3); } }
+
+/* 色のわく：とくべつな色（金）・園章の色（えんじ） */
+.palframe { position: absolute; border-radius: 18px; box-sizing: border-box; pointer-events: none; }
+.palframe.special { border: 4px solid #e0a800; background: rgba(255,250,220,0.7); }
+.palframe.crest { border: 4px solid #7a2820; background: rgba(255,255,255,0.55); }
+
+/* できた！の間は、右のパネルをうすく（押せない） */
+.dim { opacity: 0.45; pointer-events: none; transition: opacity 0.4s; }
+
+/* できた！の「写真に保存」ボタン：光の輪が広がって目立つ */
+.photoring {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 50%; border: 8px solid #ffd23f;
+  box-sizing: border-box; pointer-events: none; animation: ring 1.6s ease-out infinite;
+}
+@keyframes ring { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.6); opacity: 0; } }
+.photobtn { box-shadow: 0 0 0 6px #ffd23f, 0 6px 0 rgba(0,0,0,0.15); }
+.photobtn img { animation: wiggle 1.6s ease-in-out infinite; }
+@keyframes wiggle { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(-12deg); } 86% { transform: rotate(12deg); } 94% { transform: rotate(-6deg); } }
+
+/* 写真に なまえ：ボタン */
+.namebtn {
+  position: absolute; bottom: 24px; width: 300px; height: 76px; border-radius: 38px;
+  border: 6px solid #fff; box-sizing: border-box; color: #fff; font-size: 38px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+}
+input::placeholder { color: #c9bca8; }
+
+/* 色のボタンは、見た目より少し広くさわれる（すき間もふくめて） */
+.sw::after { content: ''; position: absolute; top: -5px; right: -5px; bottom: -5px; left: -5px; border-radius: 50%; }
+
+/* ふちどり文字（outlineText）：うしろの ふち と、前の 文字 */
+.olw { position: relative; display: inline-block; white-space: nowrap; }
+.olb { position: absolute; left: 0; top: 0; pointer-events: none; }
+.olf { position: relative; }
+#rotate .msg .olb { -webkit-text-stroke: 2.5vw #fff; color: #fff; }
+
+/* すたんぷ帳：★★★の まだ見つけていない すたんぷは、押すと ヒント（そっと光って知らせる） */
+.hintable { animation: hintglow 1.6s ease-in-out infinite; }
+.hintable.hintsel { animation: none; box-shadow: 0 0 0 6px #ffd23f; }
+@keyframes hintglow { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,210,63,0.9); } 50% { box-shadow: 0 0 0 10px rgba(255,210,63,0); } }
+.palframe.title { border: 4px solid #2f7fd0; background: rgba(235,245,255,0.7); }
